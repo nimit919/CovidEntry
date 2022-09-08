@@ -1,0 +1,683 @@
+[
+    {
+        "id": "3f78c98c383ccdde",
+        "type": "tab",
+        "label": "COVID_ENTRY_SYSTEM",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dbc8f6bf3b1f4921",
+        "type": "image",
+        "z": "3f78c98c383ccdde",
+        "name": "PREVIEW",
+        "width": 160,
+        "data": "payload",
+        "dataType": "msg",
+        "thumbnail": false,
+        "active": true,
+        "pass": false,
+        "outputs": 0,
+        "x": 410,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "332639e546929c10",
+        "type": "camera",
+        "z": "3f78c98c383ccdde",
+        "name": "MASK SCAN",
+        "x": 250,
+        "y": 360,
+        "wires": [
+            [
+                "954d3ca642f8ad43",
+                "dbc8f6bf3b1f4921"
+            ]
+        ]
+    },
+    {
+        "id": "954d3ca642f8ad43",
+        "type": "teachable machine",
+        "z": "3f78c98c383ccdde",
+        "name": "MASK CHECK",
+        "mode": "online",
+        "modelUrl": "https://teachablemachine.withgoogle.com/models/R9XZF7Br3/",
+        "localModel": "teachable_model",
+        "output": "best",
+        "activeThreshold": false,
+        "threshold": 80,
+        "activeMaxResults": false,
+        "maxResults": 3,
+        "passThrough": true,
+        "x": 460,
+        "y": 360,
+        "wires": [
+            [
+                "2b3bea6a89db8bae"
+            ]
+        ]
+    },
+    {
+        "id": "c241708b5b192897",
+        "type": "inject",
+        "z": "3f78c98c383ccdde",
+        "name": "TEMP SCAN",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "96",
+        "payloadType": "num",
+        "x": 250,
+        "y": 140,
+        "wires": [
+            [
+                "acde8511050112b9",
+                "47becafd0f94535c"
+            ]
+        ]
+    },
+    {
+        "id": "acde8511050112b9",
+        "type": "switch",
+        "z": "3f78c98c383ccdde",
+        "name": "TEMP CHECK",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lte",
+                "v": "99",
+                "vt": "num"
+            },
+            {
+                "t": "gte",
+                "v": "100",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 460,
+        "y": 160,
+        "wires": [
+            [
+                "5be679e5de9084fd"
+            ],
+            [
+                "ad58ac5fa723d3b2"
+            ]
+        ]
+    },
+    {
+        "id": "4d3dc12e2acd7b6c",
+        "type": "ui_audio",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "voice": "",
+        "always": false,
+        "x": 980,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "5be679e5de9084fd",
+        "type": "ui_button",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "PROCEED",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "YOU CAN PROCEED TO MASK SCAN",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 690,
+        "y": 100,
+        "wires": [
+            [
+                "4d3dc12e2acd7b6c",
+                "0d71814dbaf21555"
+            ]
+        ]
+    },
+    {
+        "id": "ad58ac5fa723d3b2",
+        "type": "ui_button",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "NO ENTRY",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "HIGHT TEMPERATURE DETECTED. YOU CANNOT ENTER",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 690,
+        "y": 160,
+        "wires": [
+            [
+                "c600891abf5d34d6",
+                "0d71814dbaf21555"
+            ]
+        ]
+    },
+    {
+        "id": "c600891abf5d34d6",
+        "type": "ui_audio",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "voice": "",
+        "always": false,
+        "x": 960,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "47becafd0f94535c",
+        "type": "function",
+        "z": "3f78c98c383ccdde",
+        "name": "Thinkspeak",
+        "func": "msg.method = \"GET\";\nmsg.url =\"https://api.thingspeak.com/update?api_key=ISVB3ATKUGH56ZV9&field1=\" + msg.payload; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 80,
+        "wires": [
+            [
+                "2a5971d08d13b1e6"
+            ]
+        ]
+    },
+    {
+        "id": "2a5971d08d13b1e6",
+        "type": "http request",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": false,
+        "url": "",
+        "persist": false,
+        "authType": "",
+        "senderr": false,
+        "x": 710,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2ed4fbdc597458c8",
+        "type": "ui_button",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "NO MASK",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "NO MASK DETECTED. PLEASE WEAR MASK",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 750,
+        "y": 420,
+        "wires": [
+            [
+                "c356cbe80318e1be",
+                "746b057f963d9096",
+                "1a4e30f00cc53833"
+            ]
+        ]
+    },
+    {
+        "id": "c356cbe80318e1be",
+        "type": "ui_audio",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "voice": "",
+        "always": "",
+        "x": 960,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "fd025e8e377d0482",
+        "type": "ui_button",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "PROCEED",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "PROCEED",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 770,
+        "y": 500,
+        "wires": [
+            [
+                "5a89b1e24ca832dc",
+                "420cb80e73cfd141",
+                "1a4e30f00cc53833"
+            ]
+        ]
+    },
+    {
+        "id": "5a89b1e24ca832dc",
+        "type": "ui_audio",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "voice": "",
+        "always": "",
+        "x": 980,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "2b3bea6a89db8bae",
+        "type": "switch",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "property": "payload[0].class",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "No mask",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Mask",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 590,
+        "y": 460,
+        "wires": [
+            [
+                "2ed4fbdc597458c8"
+            ],
+            [
+                "fd025e8e377d0482"
+            ]
+        ]
+    },
+    {
+        "id": "746b057f963d9096",
+        "type": "http request",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.thingspeak.com/update?api_key=ISVB3ATKUGH56ZV9&field3=0",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 970,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "420cb80e73cfd141",
+        "type": "http request",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.thingspeak.com/update?api_key=ISVB3ATKUGH56ZV9&field3=1",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 970,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3052212ccc8d458a",
+        "type": "camera",
+        "z": "3f78c98c383ccdde",
+        "name": "SANITIZER",
+        "x": 250,
+        "y": 820,
+        "wires": [
+            [
+                "725869f8a867990f",
+                "4f92098610c34c00"
+            ]
+        ]
+    },
+    {
+        "id": "725869f8a867990f",
+        "type": "image",
+        "z": "3f78c98c383ccdde",
+        "name": "PREVIEW",
+        "width": 160,
+        "data": "payload",
+        "dataType": "msg",
+        "thumbnail": false,
+        "active": true,
+        "pass": false,
+        "outputs": 0,
+        "x": 370,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "4f92098610c34c00",
+        "type": "handpose",
+        "z": "3f78c98c383ccdde",
+        "name": "SENSOR",
+        "x": 450,
+        "y": 840,
+        "wires": [
+            [
+                "f661fcacff81a7f4"
+            ]
+        ]
+    },
+    {
+        "id": "f661fcacff81a7f4",
+        "type": "switch",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 610,
+        "y": 880,
+        "wires": [
+            [
+                "211a8a973b620808"
+            ],
+            [
+                "50a1545a9711374c",
+                "e9fb3ec1b041bb15"
+            ]
+        ]
+    },
+    {
+        "id": "50a1545a9711374c",
+        "type": "ui_button",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "PROCEED",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "SANITIZER DISPOSED",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 790,
+        "y": 900,
+        "wires": [
+            [
+                "a47a96f2fe3fe60f",
+                "72c542c48ecb0ae1"
+            ]
+        ]
+    },
+    {
+        "id": "a47a96f2fe3fe60f",
+        "type": "ui_audio",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "voice": "",
+        "always": "",
+        "x": 980,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "df0b25f1c9d7d055",
+        "type": "ui_audio",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "voice": "",
+        "always": "",
+        "x": 940,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "211a8a973b620808",
+        "type": "ui_button",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "PLACE HAND",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "PLACE YOUR HAND BELOW TO SANITIZE YOR HAND",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 760,
+        "y": 840,
+        "wires": [
+            [
+                "df0b25f1c9d7d055",
+                "72c542c48ecb0ae1"
+            ]
+        ]
+    },
+    {
+        "id": "f390e68e707467b4",
+        "type": "ui_button",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "REFILL",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "REFILL SANITIZER",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 840,
+        "y": 1020,
+        "wires": [
+            [
+                "d474b3ca08b284f2",
+                "72c542c48ecb0ae1"
+            ]
+        ]
+    },
+    {
+        "id": "d474b3ca08b284f2",
+        "type": "ui_audio",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "group": "6d50dcc9308a7554",
+        "voice": "",
+        "always": "",
+        "x": 1000,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "e9fb3ec1b041bb15",
+        "type": "batch",
+        "z": "3f78c98c383ccdde",
+        "name": "CHECK",
+        "mode": "count",
+        "count": "2",
+        "overlap": 0,
+        "interval": 10,
+        "allowEmptySequence": false,
+        "topics": [],
+        "x": 680,
+        "y": 1000,
+        "wires": [
+            [
+                "f390e68e707467b4"
+            ]
+        ]
+    },
+    {
+        "id": "0d71814dbaf21555",
+        "type": "debug",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "1a4e30f00cc53833",
+        "type": "debug",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1090,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "72c542c48ecb0ae1",
+        "type": "debug",
+        "z": "3f78c98c383ccdde",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "6d50dcc9308a7554",
+        "type": "ui_group",
+        "name": "COVID_ENTRY-SYATEM",
+        "tab": "86bb9e3ca5e6c186",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "86bb9e3ca5e6c186",
+        "type": "ui_tab",
+        "name": "DISPLAY",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
